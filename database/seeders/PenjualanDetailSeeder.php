@@ -14,22 +14,18 @@ class PenjualanDetailSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            // Transaksi 1 (TRX001 - Andi)
             ['penjualan_id' => 1, 'barang_id' => 1, 'harga' => 7000000, 'jumlah' => 1, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 1, 'barang_id' => 2, 'harga' => 4500000, 'jumlah' => 1, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 1, 'barang_id' => 3, 'harga' => 150000, 'jumlah' => 2, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
 
-            // Transaksi 2 (TRX002 - Budi)
             ['penjualan_id' => 2, 'barang_id' => 4, 'harga' => 300000, 'jumlah' => 1, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 2, 'barang_id' => 5, 'harga' => 5000, 'jumlah' => 3, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 2, 'barang_id' => 6, 'harga' => 10000, 'jumlah' => 2, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
 
-            // Transaksi 3 (TRX003 - Citra)
             ['penjualan_id' => 3, 'barang_id' => 1, 'harga' => 7000000, 'jumlah' => 1, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 3, 'barang_id' => 3, 'harga' => 150000, 'jumlah' => 1, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 3, 'barang_id' => 4, 'harga' => 300000, 'jumlah' => 2, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
 
-            // Transaksi 4 - 10 (Setiap transaksi memiliki 3 barang yang berbeda)
             ['penjualan_id' => 4, 'barang_id' => 2, 'harga' => 4500000, 'jumlah' => 1, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 4, 'barang_id' => 5, 'harga' => 5000, 'jumlah' => 5, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
             ['penjualan_id' => 4, 'barang_id' => 6, 'harga' => 10000, 'jumlah' => 2, 'created_at' => '2025-03-09 10:32:54', 'updated_at' => null],
