@@ -8,8 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class UserModel extends Model
 {
     use HasFactory;
- 
-    protected $table = 'm_user'; // nama table
-    protected $primarykey = 'user_id'; // primary key pada table tsb
 
+    protected $table = 'm_user'; // Nama tabel
+    protected $primaryKey = 'user_id'; // Primary key pada tabel tersebut
+    /**
+     * 
+     * @var array
+     */
+    protected $fillable = ['level_id', 'username', 'nama'];
 }
