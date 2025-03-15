@@ -10,9 +10,12 @@ class UserController extends Controller
 {
     public function index()
     {
-      // $user = UserModel::where('username', 'manager9')->findOrFail();
-      $user = UserModel::where('level_id', 2)->count(); //untuk menghitung banyaknya data yang muncul dengan level id 2
-      // dd($user); //(dump and die) menampilkan isi dari variable user
+       $user = UserModel::firstOrCreate(
+        [
+            'username' => 'manager',
+            'nama' => 'Manager',
+        ]
+        );
        return view('user',['data' => $user]);
     }
 }
@@ -51,3 +54,6 @@ class UserController extends Controller
         // $user = UserModel::all();
         // return view('user',['data' => $user]);
 
+        //Praktikum Jobsheet 4
+        //   $user = UserModel::where('level_id', 2)->count(); //untuk menghitung banyaknya data yang muncul dengan level id 2
+      
