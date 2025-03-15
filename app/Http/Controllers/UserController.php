@@ -10,7 +10,12 @@ class UserController extends Controller
 {
     public function index()
     {
-        // Praktikum Jobsheet 3
+       $user = UserModel::firstWhere('level_id',1);
+       return view('user',['data' => $user]);
+    }
+}
+
+ // Praktikum Jobsheet 3
         //    // tambah data user dengan Eloquent Model
         //    $validLevelId = \DB::table('m_level')->pluck('level_id')->first(); // Ambil level_id pertama yang tersedia
         //    $data = [
@@ -32,16 +37,15 @@ class UserController extends Controller
         // $user = UserModel::all(); //ambil semua data dari table m_user
         // return view('user', ['data' => $user]);
 
-           $data = [
-            'level_id'=> 2,
-            'username' => 'manager_tiga',
-            'nama' => 'manager 3',
-            'password' => Hash::make('12345'), 
-        ];
-        UserModel::create($data);
+        // Praktikum 1 Jobsheet 4
+        //    $data = [
+        //     'level_id'=> 2,
+        //     'username' => 'manager_tiga',
+        //     'nama' => 'manager 3',
+        //     'password' => Hash::make('12345'), 
+        // ];
+        // UserModel::create($data);
 
-        $user = UserModel::all();
-        return view('user',['data' => $user]);
-    }
-    }
+        // $user = UserModel::all();
+        // return view('user',['data' => $user]);
 
