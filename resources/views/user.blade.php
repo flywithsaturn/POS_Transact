@@ -24,7 +24,7 @@
                 <td>{{ $d->level_id }}</td>
                 <td>
                     <a href="{{ url('/user/ubah/' . $d->user_id) }}">Ubah</a> |
-                    <a href="{{ url('/user/hapus/' . $d->user_id) }}">Hapus</a>
+                    <a href="{{ url('/user/hapus/' . $d->user_id) }}" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>          
                 </td>
             </tr>
             @endforeach

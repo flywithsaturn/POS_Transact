@@ -18,6 +18,37 @@ class UserController extends Controller
     {
         return view('user_tambah'); // Pastikan file ini ada di resources/views/
     }
+
+    public function tambah_simpan(Request $request)
+    {
+        // Simpan data ke database
+        UserModel::create([
+            'username' => $request->username,
+            'nama' => $request->nama,
+            'password' => Hash::make($request->password), // Perbaikan di sini
+            'level_id' => $request->level_id
+        ]);
+
+        return redirect('/user')->with('success', 'User berhasil ditambahkan!');
+    }
+    public function ubah($id)
+    {
+        $user = UserModel::find($id);
+        return view('user_ubah', ['data' => $user]); 
+    }
+    public function ubah_simpan($id, Request $request) {
+    $user = UserModel::findOrFail($id);
+
+    $user->username = $request->username;
+    $user->nama = $request->nama;
+    $user->password = $request->password ? Hash::make($request->password) : $user->password;
+    $user->level_id = $request->level_id;
+    
+    $user->save();
+
+    return redirect('/user')->with('success', 'User berhasil diperbarui!');
+}
+
 }
 
  // Praktikum Jobsheet 3
