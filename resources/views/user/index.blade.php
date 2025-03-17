@@ -38,7 +38,7 @@
                 "type": "POST"
             },
             columns: [
-                { 
+                { // nomor urut dari laravel datatable addIndexColumn()
                     data: "DT_RowIndex",
                     className: "text-center",
                     orderable: false,
@@ -46,21 +46,25 @@
                 },
                 { 
                     data: "username",
+                    className: "",
                     orderable: true,
                     searchable: true
                 },
                 { 
                     data: "nama",
+                    className: "",
                     orderable: true,
                     searchable: true
                 },
                 { 
                     data: "level.level_nama",
+                    className: "",
                     orderable: false,
                     searchable: false
                 },
                 { 
                     data: "aksi",
+                    className: "",
                     orderable: false,
                     searchable: false
                 }
