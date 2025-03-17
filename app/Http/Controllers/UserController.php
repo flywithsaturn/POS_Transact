@@ -37,8 +37,7 @@ class UserController extends Controller
             ->with('level');
 
         return DataTables::of($users)
-            // Menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
-            ->addIndexColumn()
+            ->addIndexColumn() // Menambahkan kolom index / no urut (default nama kolom: DT_RowIndex)
             ->addColumn('aksi', function ($user) {
                 // Menambahkan kolom aksi
                 $btn  = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
@@ -75,5 +74,25 @@ class UserController extends Controller
             'level'      => $level,
             'activeMenu' => $activeMenu
         ]);
+    }
+
+    // Menyimpan data user baru
+    public function store(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|min:3|unique:m_user,username', // Username harus unik, minimal 3 karakter
+            'nama'     => 'required|string|max:100', // Nama maksimal 100 karakter
+            'password' => 'required|min:5', // Password minimal 5 karakter
+            'level_id' => 'required|integer' // Level ID harus berupa angka
+        ]);
+
+        UserModel::create([
+            'username' => $request->username,
+            'nama'     => $request->nama,
+            'password' => bcrypt($request->password), // Enkripsi password sebelum disimpan
+            'level_id' => $request->level_id
+        ]);
+
+        return redirect('/user')->with('success', 'Data user berhasil disimpan');
     }
 }
