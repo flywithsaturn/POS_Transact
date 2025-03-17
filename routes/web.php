@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 
 Route::get('/', [WelcomeController::class,'index']);
 
+// Route User
 Route::group(['prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'index']);          // menampilkan halaman awal user
     Route::post('/list', [UserController::class, 'list']);      // menampilkan data user dalam bentuk json untuk datatables
@@ -22,6 +23,17 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('/{id}', [UserController::class, 'destroy']); // menghapus data user
 });
 
+// Route Level
+Route::group(['prefix' => 'level'], function () {
+    Route::get('/', [LevelController::class, 'index']);          // Menampilkan halaman awal level
+    Route::post('/list', [LevelController::class, 'list']);      // Menampilkan data level dalam bentuk JSON untuk DataTables
+    Route::get('/create', [LevelController::class, 'create']);   // Menampilkan halaman form tambah level
+    Route::post('/', [LevelController::class, 'store']);         // Menyimpan data level baru
+    Route::get('/{id}', [LevelController::class, 'show']);       // Menampilkan detail level
+    Route::get('/{id}/edit', [LevelController::class, 'edit']);  // Menampilkan halaman form edit level
+    Route::put('/{id}', [LevelController::class, 'update']);     // Menyimpan perubahan data level
+    Route::delete('/{id}', [LevelController::class, 'destroy']); // Menghapus data level
+});
 
 // Praktikum Jobsheet 4
 // Route::get('/level',[LevelController::class,'index']);
