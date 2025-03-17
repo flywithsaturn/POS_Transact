@@ -9,6 +9,7 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\BarangController;
 
 Route::get('/', [WelcomeController::class,'index']);
 
@@ -57,6 +58,16 @@ Route::prefix('supplier')->group(function () {
     Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
     Route::put('/{id}', [SupplierController::class, 'update'])->name('supplier.update');
     Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
+});
+
+Route::prefix('barang')->group(function () {
+    Route::get('/', [BarangController::class, 'index'])->name('barang.index');
+    Route::get('/create', [BarangController::class, 'create'])->name('barang.create');
+    Route::post('/', [BarangController::class, 'store'])->name('barang.store');
+    Route::get('/{id}', [BarangController::class, 'show'])->name('barang.show');
+    Route::get('/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+    Route::put('/{id}', [BarangController::class, 'update'])->name('barang.update');
+    Route::delete('/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
 });
 
 // Praktikum Jobsheet 4
