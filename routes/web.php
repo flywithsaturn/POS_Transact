@@ -35,6 +35,18 @@ Route::group(['prefix' => 'level'], function () {
     Route::delete('/{id}', [LevelController::class, 'destroy']); // Menghapus data level
 });
 
+// Route Kategori
+Route::prefix('kategori')->group(function () {
+    Route::get('/', [KategoriController::class, 'index'])->name('kategori.index'); // Halaman daftar kategori
+    Route::get('/list', [KategoriController::class, 'list'])->name('kategori.list'); // DataTables JSON
+    Route::get('/create', [KategoriController::class, 'create'])->name('kategori.create'); // Form tambah kategori
+    Route::post('/', [KategoriController::class, 'store'])->name('kategori.store'); // Simpan kategori baru
+    Route::get('/{id}', [KategoriController::class, 'show'])->name('kategori.show'); // Detail kategori
+    Route::get('/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit'); // Form edit kategori
+    Route::put('/{id}', [KategoriController::class, 'update'])->name('kategori.update'); // Simpan perubahan kategori
+    Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy'); // Hapus kategori
+});
+
 // Praktikum Jobsheet 4
 // Route::get('/level',[LevelController::class,'index']);
 // Route::get('/kategori',[KategoriController::class,'index']);
