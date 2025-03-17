@@ -8,6 +8,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', [WelcomeController::class,'index']);
 
@@ -45,6 +46,17 @@ Route::prefix('kategori')->group(function () {
     Route::get('/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit'); // Form edit kategori
     Route::put('/{id}', [KategoriController::class, 'update'])->name('kategori.update'); // Simpan perubahan kategori
     Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy'); // Hapus kategori
+});
+
+// Route Supplier
+Route::prefix('supplier')->group(function () {
+    Route::get('/', [SupplierController::class, 'index'])->name('supplier.index');
+    Route::get('/create', [SupplierController::class, 'create'])->name('supplier.create');
+    Route::post('/', [SupplierController::class, 'store'])->name('supplier.store');
+    Route::get('/{id}', [SupplierController::class, 'show'])->name('supplier.show'); // Perbaikan di sini
+    Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
+    Route::put('/{id}', [SupplierController::class, 'update'])->name('supplier.update');
+    Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
 });
 
 // Praktikum Jobsheet 4
