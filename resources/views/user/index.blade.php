@@ -63,6 +63,7 @@
         });
     }
 
+    var dataUser;
     $(document).ready(function() {
         var dataUser = $('#table_user').DataTable({
             serverSide: true, // Menggunakan server-side processing
