@@ -177,47 +177,38 @@ class UserController extends Controller
     {
         $level = LevelModel::select('level_id', 'level_nama')->get();
 
-        return view('user.create_ajax')->with('level', $level);
+        return view('user.create_ajax')
+            ->with('level', $level);
     }
 
-    public function store_ajax(Request $request) 
+    public function store_ajax(Request $request)
     {
-        // Cek apakah request berupa AJAX
+        // Cek apakah request adalah ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'level_id'  => 'required|integer',
-                'username'  => 'required|string|min:3|unique:m_user,username',
-                'nama'      => 'required|string|max:100',
-                'password'  => 'required|min:6',
+                'level_id' => 'required|integer',
+                'username' => 'required|string|min:3|unique:m_user,username',
+                'nama'     => 'required|string|max:100',
+                'password' => 'required|min:6'
             ];
-    
-            // Validasi input
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
                 return response()->json([
-                    'status'   => false,
-                    'message'  => 'Validasi Gagal',
-                    'msgField' => $validator->errors(), // Pesan error validasi
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors(),
                 ]);
             }
-    
-            // Simpan data user ke database
-            UserModel::create([
-                'level_id'  => $request->level_id,
-                'username'  => $request->username,
-                'nama'      => $request->nama,
-                'password'  => bcrypt($request->password), // Enkripsi password
-            ]);
-    
+
+            UserModel::create($request->all());
             return response()->json([
-                'status'  => true,
-                'message' => 'Data user berhasil disimpan',
+                'status' => true,
+                'message' => 'Data user berhasil disimpan'
             ]);
         }
-    
-        // Redirect jika bukan AJAX request
+
         return redirect('/');
     }
-
 }
