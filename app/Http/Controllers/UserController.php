@@ -15,7 +15,7 @@ class UserController extends Controller
     {
         $breadcrumb = (object) [
             'title' => 'Daftar User',
-            'list'  => ['Home', 'User']
+            'list' => ['Home', 'User']
         ];
 
         $page = (object) [
@@ -32,7 +32,7 @@ class UserController extends Controller
             'level' => $level,
             'activeMenu' => $activeMenu
         ]);
-        
+
     }
 
     // Ambil data user dalam bentuk JSON untuk DataTables
@@ -57,7 +57,7 @@ class UserController extends Controller
                         '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\')">Hapus</button></form>';
             */
 
-                $btn  = '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn = '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/user/' . $user->user_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
 
@@ -72,7 +72,7 @@ class UserController extends Controller
     {
         $breadcrumb = (object) [
             'title' => 'Tambah User',
-            'list'  => ['Home', 'User', 'Tambah']
+            'list' => ['Home', 'User', 'Tambah']
         ];
 
         $page = (object) [
@@ -90,14 +90,14 @@ class UserController extends Controller
     {
         $request->validate([
             'username' => 'required|string|min:3|unique:m_user,username',
-            'nama'     => 'required|string|max:100',
+            'nama' => 'required|string|max:100',
             'password' => 'required|min:5',
             'level_id' => 'required|integer'
         ]);
 
         UserModel::create([
             'username' => $request->username,
-            'nama'     => $request->nama,
+            'nama' => $request->nama,
             'password' => bcrypt($request->password),
             'level_id' => $request->level_id
         ]);
@@ -112,7 +112,7 @@ class UserController extends Controller
 
         $breadcrumb = (object) [
             'title' => 'Detail User',
-            'list'  => ['Home', 'User', 'Detail']
+            'list' => ['Home', 'User', 'Detail']
         ];
 
         $page = (object) [
@@ -127,12 +127,12 @@ class UserController extends Controller
     // Menampilkan halaman form edit user
     public function edit(string $id)
     {
-        $user  = UserModel::find($id);
+        $user = UserModel::find($id);
         $level = LevelModel::all();
 
         $breadcrumb = (object) [
             'title' => 'Edit User',
-            'list'  => ['Home', 'User', 'Edit']
+            'list' => ['Home', 'User', 'Edit']
         ];
 
         $page = (object) [
@@ -149,7 +149,7 @@ class UserController extends Controller
     {
         $request->validate([
             'username' => 'required|string|min:3|unique:m_user,username,' . $id . ',user_id',
-            'nama'     => 'required|string|max:100',
+            'nama' => 'required|string|max:100',
             'password' => 'nullable|min:5',
             'level_id' => 'required|integer'
         ]);
@@ -157,7 +157,7 @@ class UserController extends Controller
         $user = UserModel::find($id);
         $user->update([
             'username' => $request->username,
-            'nama'     => $request->nama,
+            'nama' => $request->nama,
             'password' => $request->password ? bcrypt($request->password) : $user->password,
             'level_id' => $request->level_id
         ]);
@@ -196,7 +196,7 @@ class UserController extends Controller
             $rules = [
                 'level_id' => 'required|integer',
                 'username' => 'required|string|min:3|unique:m_user,username',
-                'nama'     => 'required|string|max:100',
+                'nama' => 'required|string|max:100',
                 'password' => 'required|min:6'
             ];
 
@@ -219,17 +219,23 @@ class UserController extends Controller
 
         return redirect('/');
     }
+    public function show_ajax(string $id)
+    {
+        $user = UserModel::find($id);
+        $level = LevelModel::select('level_id', 'level_nama')->get();
+        return view('user.show_ajax', compact('user'));
+    }
 
-   // Menampilkan halaman form edit user ajax
-   public function edit_ajax(string $id)
-   {
-       $user = UserModel::find($id);
-       $level = LevelModel::select('level_id', 'level_nama')->get();
+    // Menampilkan halaman form edit user ajax
+    public function edit_ajax(string $id)
+    {
+        $user = UserModel::find($id);
+        $level = LevelModel::select('level_id', 'level_nama')->get();
 
-       return view('user.edit_ajax', ['user' => $user, 'level' => $level]);
-   }
+        return view('user.edit_ajax', ['user' => $user, 'level' => $level]);
+    }
 
-   public function update_ajax(Request $request, $id)
+    public function update_ajax(Request $request, $id)
     {
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
@@ -299,7 +305,7 @@ class UserController extends Controller
                 ]);
             }
         }
-        
+
         return redirect('/');
     }
 }

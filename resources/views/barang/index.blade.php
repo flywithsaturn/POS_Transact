@@ -81,19 +81,19 @@
                     },
                     {
                         data: "harga_beli",
-                        className: "text-right",
+                        className: "text-center",
                         orderable: true,
                         searchable: true
                     },
                     {
                         data: "harga_jual",
-                        className: "text-right",
+                        className: "text-center",
                         orderable: true,
                         searchable: true
                     },
                     {
                         data: "kategori",
-                        className: "",
+                        className: "text-center",
                         orderable: true,
                         searchable: true
                     },

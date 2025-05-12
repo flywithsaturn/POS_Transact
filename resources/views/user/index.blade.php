@@ -22,18 +22,18 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter:</label>
                         <div class="col-3">
                             <select class="form-control" id="level_id" name="level_id" required>
                                 <option value="">- Semua -</option>
                                 @foreach ($level as $item)
-                                    <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
+                                <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">Level Pengguna</small>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -61,12 +61,12 @@
 @push('js')
     <script>
         function modalAction(url = '') {
-            $('#myModal').load(url, function() {
+            $('#myModal').load(url, function () {
                 $('#myModal').modal('show');
             });
         }
         var dataUser;
-        $(document).ready(function() {
+        $(document).ready(function () {
             dataUser = $('#table_user').DataTable({
                 // serverSide: true, jika ingin menggunakan server side processing
                 serverSide: true,
@@ -74,46 +74,46 @@
                     url: "{{ url('user/list') }}",
                     dataType: "json",
                     type: "POST",
-                    data: function(d) {
+                    data: function (d) {
                         d.level_id = $('#level_id').val();
                     }
                 },
                 columns: [{
-                        // nomor urut dari laravel datatable addIndexColumn()
-                        data: "DT_RowIndex",
-                        className: "text-center",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "username",
-                        className: "",
-                        orderable: true, // jika ingin kolom ini bisa diurutkan
-                        searchable: true // jika ingin kolom ini bisa dicari
-                    },
-                    {
-                        data: "nama",
-                        className: "",
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        // mengambil data level hasil dari ORM berelasi
-                        data: "level.level_nama",
-                        className: "",
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: "aksi",
-                        className: "",
-                        orderable: false,
-                        searchable: false
-                    }
+                    // nomor urut dari laravel datatable addIndexColumn()
+                    data: "DT_RowIndex",
+                    className: "text-center",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "username",
+                    className: "",
+                    orderable: true, // jika ingin kolom ini bisa diurutkan
+                    searchable: true // jika ingin kolom ini bisa dicari
+                },
+                {
+                    data: "nama",
+                    className: "",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    // mengambil data level hasil dari ORM berelasi
+                    data: "level.level_nama",
+                    className: "",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "aksi",
+                    className: "",
+                    orderable: false,
+                    searchable: false
+                }
                 ]
             });
 
-            $('#level_id').on('change', function() {
+            $('#level_id').on('change', function () {
                 dataUser.ajax.reload();
             })
         });

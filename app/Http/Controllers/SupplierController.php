@@ -13,7 +13,7 @@ class SupplierController extends Controller
     {
         $breadcrumb = (object) [
             'title' => 'Daftar Supplier',
-            'list'  => ['Home', 'Supplier']
+            'list' => ['Home', 'Supplier']
         ];
 
         $page = (object) [
@@ -32,7 +32,7 @@ class SupplierController extends Controller
         return DataTables::of($supplier)
             ->addIndexColumn()
             ->addColumn('aksi', function ($supplier) {
-                $btn  = '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn = '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
 
@@ -46,7 +46,7 @@ class SupplierController extends Controller
     {
         $breadcrumb = (object) [
             'title' => 'Tambah Supplier',
-            'list'  => ['Home', 'Supplier', 'Tambah']
+            'list' => ['Home', 'Supplier', 'Tambah']
         ];
 
         $page = (object) [
@@ -61,9 +61,9 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'supplier_kode'  => 'required|string|max:10|unique:m_supplier,supplier_kode',
-            'supplier_nama'  => 'required|string|min:3',
-            'supplier_alamat'=> 'required|string|min:5'
+            'supplier_kode' => 'required|string|max:10|unique:m_supplier,supplier_kode',
+            'supplier_nama' => 'required|string|min:3',
+            'supplier_alamat' => 'required|string|min:5'
         ]);
 
         SupplierModel::create($request->all());
@@ -87,9 +87,9 @@ class SupplierController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'supplier_kode'  => 'required|string|max:10|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
-            'supplier_nama'  => 'required|string|min:3',
-            'supplier_alamat'=> 'required|string|min:5'
+            'supplier_kode' => 'required|string|max:10|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
+            'supplier_nama' => 'required|string|min:3',
+            'supplier_alamat' => 'required|string|min:5'
         ]);
 
         $supplier = SupplierModel::find($id);
@@ -122,9 +122,9 @@ class SupplierController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'supplier_kode'  => 'required|string|max:10|unique:m_supplier,supplier_kode',
-                'supplier_nama'  => 'required|string|min:3',
-                'supplier_alamat'=> 'required|string|min:5'
+                'supplier_kode' => 'required|string|max:10|unique:m_supplier,supplier_kode',
+                'supplier_nama' => 'required|string|min:3',
+                'supplier_alamat' => 'required|string|min:5'
             ];
             $validator = Validator::make($request->all(), $rules);
 
@@ -137,6 +137,11 @@ class SupplierController extends Controller
         }
         return redirect('/');
     }
+    public function show_ajax(string $id)
+    {
+        $supplier = SupplierModel::find($id);
+        return view('supplier.show_ajax', ['supplier' => $supplier]);
+    }
 
     public function edit_ajax(string $id)
     {
@@ -148,9 +153,9 @@ class SupplierController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'supplier_kode'  => 'required|string|max:10|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
-                'supplier_nama'  => 'required|string|min:3',
-                'supplier_alamat'=> 'required|string|min:5'
+                'supplier_kode' => 'required|string|max:10|unique:m_supplier,supplier_kode,' . $id . ',supplier_id',
+                'supplier_nama' => 'required|string|min:3',
+                'supplier_alamat' => 'required|string|min:5'
             ];
             $validator = Validator::make($request->all(), $rules);
 

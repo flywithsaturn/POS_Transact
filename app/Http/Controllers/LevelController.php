@@ -13,7 +13,7 @@ class LevelController extends Controller
     {
         $breadcrumb = (object) [
             'title' => 'Daftar Level',
-            'list'  => ['Home', 'Level']
+            'list' => ['Home', 'Level']
         ];
 
         $page = (object) [
@@ -28,25 +28,25 @@ class LevelController extends Controller
     public function list(Request $request)
     {
         $levels = LevelModel::select('level_id', 'level_kode', 'level_nama'); // Pastikan level_kode ada di sini
-    
+
         return DataTables::of($levels)
             ->addIndexColumn()
             ->addColumn('aksi', function ($level) {
-                $btn  = '<button onclick="modalAction(\'' . url('/level/' . $level->level_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn = '<button onclick="modalAction(\'' . url('/level/' . $level->level_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/level/' . $level->level_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/level/' . $level->level_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-    
+
                 return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
-    
+
     public function create()
     {
         $breadcrumb = (object) [
             'title' => 'Tambah Level',
-            'list'  => ['Home', 'Level', 'Tambah']
+            'list' => ['Home', 'Level', 'Tambah']
         ];
 
         $page = (object) [
@@ -75,7 +75,7 @@ class LevelController extends Controller
 
         $breadcrumb = (object) [
             'title' => 'Detail Level',
-            'list'  => ['Home', 'Level', 'Detail']
+            'list' => ['Home', 'Level', 'Detail']
         ];
 
         $page = (object) [
@@ -93,7 +93,7 @@ class LevelController extends Controller
 
         $breadcrumb = (object) [
             'title' => 'Edit Level',
-            'list'  => ['Home', 'Level', 'Edit']
+            'list' => ['Home', 'Level', 'Edit']
         ];
 
         $page = (object) [
@@ -152,6 +152,12 @@ class LevelController extends Controller
         }
 
         return redirect('/');
+    }
+    public function show_ajax(string $id)
+    {
+        // Menambahkan eager loading pada relasi kategori
+        $level = LevelModel::find($id);
+        return view('level.show_ajax', compact('level'));
     }
 
     public function edit_ajax(string $id)
