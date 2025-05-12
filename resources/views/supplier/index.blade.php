@@ -44,13 +44,13 @@
 @push('js')
     <script>
         function modalAction(url = '') {
-            $('#myModal').load(url, function() {
+            $('#myModal').load(url, function () {
                 $('#myModal').modal('show');
             });
         }
 
         var dataSupplier;
-        $(document).ready(function() {
+        $(document).ready(function () {
             dataSupplier = $('#table_supplier').DataTable({
                 serverSide: true,
                 ajax: {
@@ -85,7 +85,7 @@
                     },
                     {
                         data: "aksi",
-                        className: "",
+                        className: "text-center",
                         orderable: false,
                         searchable: false
                     }
