@@ -59,6 +59,9 @@ ack">
                         <div class="col-4">
                             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
                         </div>
+                        <div>
+                            <a href="{{ route('register') }}" class="text-center">Create an account</a>
+                        </div>
                         <!-- /.col -->
                     </div>
                 </form>
