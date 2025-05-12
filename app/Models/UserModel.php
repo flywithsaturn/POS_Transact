@@ -12,14 +12,9 @@ class UserModel extends Model
 
     protected $table = 'm_user'; // nama table
     protected $primaryKey = 'user_id'; // primary key pada table tsb
-
-    protected $fillable = [
-        'level_id',
-        'username',
-        'nama',
-        'password',
-    ];
-
+    protected $filalable = ['username', 'password', 'nama', 'level_id', 'created_at', 'updated_at'];
+    protected $hidden = ['password']; // Jangan ditampilkan saat select
+    protected $casts = ['password' => 'hashed']; // casting password menjadi hashed
     public function level(): BelongsTo
     {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
