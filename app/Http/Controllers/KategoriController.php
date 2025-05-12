@@ -13,7 +13,7 @@ class KategoriController extends Controller
     {
         $breadcrumb = (object) [
             'title' => 'Daftar Kategori',
-            'list'  => ['Home', 'Kategori']
+            'list' => ['Home', 'Kategori']
         ];
 
         $page = (object) [
@@ -28,25 +28,25 @@ class KategoriController extends Controller
     public function list(Request $request)
     {
         $kategori = KategoriModel::select('kategori_id', 'kategori_kode', 'kategori_nama');
-    
+
         return DataTables::of($kategori)
             ->addIndexColumn()
             ->addColumn('aksi', function ($kategori) {
-                $btn  = '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn = '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-    
+
                 return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
-    
+
     public function create()
     {
         $breadcrumb = (object) [
             'title' => 'Tambah Kategori',
-            'list'  => ['Home', 'Kategori', 'Tambah']
+            'list' => ['Home', 'Kategori', 'Tambah']
         ];
 
         $page = (object) [
@@ -128,6 +128,12 @@ class KategoriController extends Controller
             return response()->json(['status' => true, 'message' => 'Data kategori berhasil disimpan']);
         }
         return redirect('/');
+    }
+    public function show_ajax(string $id)
+    {
+        // Menambahkan eager loading pada relasi kategori
+        $kategori = KategoriModel::find($id);
+        return view('kategori.show_ajax', compact('kategori'));
     }
 
     public function edit_ajax(string $id)
