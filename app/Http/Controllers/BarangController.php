@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangModel;
+use App\Models\LevelModel;
 use App\Models\KategoriModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class BarangController extends Controller
 {
@@ -146,19 +148,19 @@ class BarangController extends Controller
 
     public function create_ajax()
     {
-        $kategori = KategoriModel::all();
-        return view('barang.create_ajax', compact('kategori'));
+        $kategori = KategoriModel::select('kategori_id', 'kategori_nama')->get();
+        return view('barang.create_ajax')->with('kategori', $kategori);
     }
 
     public function store_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode',
-                'barang_nama' => 'required|string|max:100',
-                'kategori_id' => 'required|exists:m_kategori,kategori_id',
-                'harga_beli' => 'required|integer|min:0',
-                'harga_jual' => 'required|integer|min:0',
+                'kategori_id' => ['required', 'integer', 'exists:m_kategori,kategori_id'],
+                'barang_kode' => ['required', 'min:3', 'max:20', 'unique:m_barang,barang_kode'],
+                'barang_nama' => ['required', 'string', 'max:100'],
+                'harga_beli' => ['required', 'numeric'],
+                'harga_jual' => ['required', 'numeric'],
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -166,23 +168,21 @@ class BarangController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Validasi gagal',
+                    'message' => 'Validasi Gagal',
                     'msgField' => $validator->errors()
                 ]);
             }
 
             BarangModel::create($request->all());
 
-            return response()->json(['status' => true, 'message' => 'Data barang berhasil disimpan']);
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil disimpan'
+            ]);
         }
 
+        // Jika bukan AJAX, arahkan ke halaman utama (fallback)
         return redirect('/');
-    }
-
-    public function show_ajax(string $id)
-    {
-        $barang = BarangModel::with('kategori')->find($id);
-        return view('barang.show_ajax', compact('barang'));
     }
 
     public function edit_ajax(string $id)
@@ -191,6 +191,12 @@ class BarangController extends Controller
         $kategori = KategoriModel::all();
 
         return view('barang.edit_ajax', compact('barang', 'kategori'));
+    }
+
+    public function show_ajax(string $id)
+    {
+        $barang = BarangModel::with('kategori')->find($id);
+        return view('barang.show_ajax', compact('barang'));
     }
 
     public function update_ajax(Request $request, string $id)
@@ -222,10 +228,15 @@ class BarangController extends Controller
         return redirect('/');
     }
 
-    public function confirm_ajax(string $id)
+    public function confirm_ajax($id)
     {
         $barang = BarangModel::find($id);
-        return view('barang.confirm_ajax', compact('barang'));
+
+        if (!$barang) {
+            abort(404);
+        }
+
+        return view('barang.confirm_ajax', ['barang' => $barang]);
     }
 
     public function delete_ajax(Request $request, string $id)
@@ -242,4 +253,73 @@ class BarangController extends Controller
 
         return redirect('/');
     }
+
+    public function import()
+    {
+        return view('barang.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            // Validasi file harus .xlsx dan maksimal 1MB
+            $rules = [
+                'file_barang' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+            // Ambil file dari request
+            $file = $request->file('file_barang');
+            // Load reader file Excel
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            // Baca data dari file Excel
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+            $insert = [];
+            // Proses data mulai dari baris ke-2 (baris pertama dianggap header)
+            if (count($data) > 1) {
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) {
+                        $insert[] = [
+                            'kategori_id' => $value['A'],
+                            'barang_kode' => $value['B'],
+                            'barang_nama' => $value['C'],
+                            'harga_beli' => $value['D'],
+                            'harga_jual' => $value['E'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+                // Simpan data jika ada yang valid
+                if (count($insert) > 0) {
+                    BarangModel::insertOrIgnore($insert);
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data berhasil diimport'
+                    ]);
+                }
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+            return response()->json([
+                'status' => false,
+                'message' => 'File tidak berisi data'
+            ]);
+        }
+        // Fallback jika bukan AJAX request
+        return redirect('/');
+    }
+
 }
