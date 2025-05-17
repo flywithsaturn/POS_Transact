@@ -28,6 +28,11 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
     // HOME
     Route::get('/', [WelcomeController::class, 'index']);
     // masukkan semua route yang perlu autentikasi di sini
+    // untuk update profile
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/update_profile', [UserController::class, 'update_profile']); // menampilkan halaman form edit profile
+        Route::post('/update_profile', [UserController::class, 'update_profile_post']); // menyimpan perubahan data profile
+    });
 
     // USER
     Route::middleware(['authorize:ADM'])->group(function () {

@@ -9,6 +9,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -468,5 +470,49 @@ class UserController extends Controller
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();
         return $pdf->stream('Data User ' . date('Y-m-d H:i:s') . '.pdf');
+    }
+
+    public function update_profile()
+    {
+        $breadcrumb = (object) [
+            'title' => 'Update Profile',
+            'list' => ['Home', 'User']
+        ];
+
+        $page = (object) [
+            'title' => 'Profile User'
+        ];
+        $activeMenu = 'update_profile'; // set menu yang sedang aktif
+
+        return view('profile.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+    }
+
+    public function update_profile_post(Request $request)
+    {
+        $user = UserModel::find(Auth::id());
+
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10000',
+        ]);
+
+        // Update nama
+        $user->nama = $request->nama;
+
+        // Handle file upload
+        if ($request->hasFile('profile_image')) {
+            // Delete old image if exists
+            if ($user->profile_image && Storage::exists('public/' . $user->profile_image)) {
+                Storage::delete('public/' . $user->profile_image);
+            }
+
+            // Store new image
+            $path = $request->file('profile_image')->store('profile_images', 'public');
+            $user->profile_image = $path;
+        }
+
+        $user->save();
+
+        return redirect('/user/update_profile')->with('success', 'Profile updated successfully!');
     }
 }
