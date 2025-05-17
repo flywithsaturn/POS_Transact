@@ -6,8 +6,11 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <!-- Tombol Tambah -->
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('level/create') }}">Tambah</a>
-                <button onclick="modalAction('{{ url('level/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah
+                <a href="{{ url('/level/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i>
+                    Export</a>
+                <button onclick="modalAction('{{ url('/level/import') }}')" class="btn btn-info">Import</button>
+                <a class="btn btn-primary" href="{{ url('/level/create') }}">Tambah</a>
+                <button onclick="modalAction('{{ url('/level/create_ajax') }}')" class="btn btn-success">Tambah
                     Ajax</button>
             </div>
         </div>

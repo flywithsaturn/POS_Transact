@@ -7,6 +7,7 @@ use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UserController extends Controller
 {
@@ -307,5 +308,145 @@ class UserController extends Controller
         }
 
         return redirect('/');
+    }
+    public function import()
+    {
+        return view('user.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_user' => ['required', 'mimes:xlsx', 'max:1024'],
+                'password_default' => ['required', 'string', 'min:3'] // Password default untuk semua user
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $file = $request->file('file_user');
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if (count($data) > 1) {
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) {
+                        $insert[] = [
+                            'username' => $value['A'],
+                            'nama' => $value['B'],
+                            'password' => bcrypt($request->password_default),
+                            'level_id' => $value['C'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+
+                if (count($insert) > 0) {
+                    try {
+                        UserModel::insertOrIgnore($insert);
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'Data user berhasil diimport'
+                        ]);
+                    } catch (\Exception $e) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                        ]);
+                    }
+                }
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data user yang diimport'
+                ]);
+            }
+
+            return response()->json([
+                'status' => false,
+                'message' => 'File yang diupload kosong atau format tidak sesuai'
+            ]);
+        }
+
+        return redirect('/');
+    }
+
+    public function export_excel(Request $request)
+    {
+        // Get user data with level relationship
+        $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
+            ->with('level')
+            ->orderBy('user_id');
+
+        // Apply level filter if provided
+        if ($request->level_id) {
+            $users->where('level_id', $request->level_id);
+        }
+
+        $users = $users->get();
+
+        // Load Excel library
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set headers
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Username');
+        $sheet->setCellValue('C1', 'Nama');
+        $sheet->setCellValue('D1', 'Level');
+        $sheet->setCellValue('E1', 'ID User');
+        $sheet->setCellValue('F1', 'ID Level');
+
+        // Make headers bold
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+
+        // Populate data
+        $no = 1;
+        $row = 2;
+        foreach ($users as $user) {
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, $user->username);
+            $sheet->setCellValue('C' . $row, $user->nama);
+            $sheet->setCellValue('D' . $row, $user->level->level_nama ?? ''); // Access level name through relationship
+            $sheet->setCellValue('E' . $row, $user->user_id);
+            $sheet->setCellValue('F' . $row, $user->level_id);
+            $row++;
+            $no++;
+        }
+
+        // Auto-size columns
+        foreach (range('A', 'F') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        // Set sheet title
+        $sheet->setTitle('Data User');
+
+        // Create writer and set headers for download
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data User ' . date('Y-m-d H:i:s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
     }
 }

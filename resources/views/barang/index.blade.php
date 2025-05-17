@@ -3,7 +3,7 @@
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card">
-            <div class="card-header">a
+            <div class="card-header">
                 <h3 class="card-title">Daftar Barang</h3>
                 <div class="card-tools">
                     <a href="{{ url('/barang/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i>

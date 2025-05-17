@@ -6,6 +6,7 @@ use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class SupplierController extends Controller
 {
@@ -191,5 +192,131 @@ class SupplierController extends Controller
             return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
         }
         return redirect('/');
+    }
+
+    public function import()
+    {
+        return view('supplier.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_supplier' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $file = $request->file('file_supplier');
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if (count($data) > 1) {
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) {
+                        $insert[] = [
+                            'supplier_kode' => $value['A'],
+                            'supplier_nama' => $value['B'],
+                            'supplier_alamat' => $value['C'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+
+                if (count($insert) > 0) {
+                    SupplierModel::insertOrIgnore($insert);
+                }
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data supplier berhasil diimport'
+                ]);
+            }
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data supplier yang diimport'
+            ]);
+        }
+
+        return redirect('/');
+    }
+
+    public function export_excel(Request $request)
+    {
+        // Get supplier data to export (with optional filtering)
+        $suppliers = SupplierModel::select('supplier_id', 'supplier_kode', 'supplier_nama', 'supplier_alamat')
+            ->orderBy('supplier_id');
+
+        // Apply the same filter as in list() method
+        $filter_nama = $request->input('filter_nama');
+        if (!empty($filter_nama)) {
+            $suppliers->where('supplier_nama', 'like', '%' . $filter_nama . '%');
+        }
+
+        $suppliers = $suppliers->get();
+
+        // Load Excel library
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set headers
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kode Supplier');
+        $sheet->setCellValue('C1', 'Nama Supplier');
+        $sheet->setCellValue('D1', 'Alamat Supplier');
+        $sheet->setCellValue('E1', 'ID Supplier');
+
+        // Make headers bold
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+
+        // Populate data
+        $no = 1;
+        $row = 2;
+        foreach ($suppliers as $supplier) {
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, $supplier->supplier_kode);
+            $sheet->setCellValue('C' . $row, $supplier->supplier_nama);
+            $sheet->setCellValue('D' . $row, $supplier->supplier_alamat);
+            $sheet->setCellValue('E' . $row, $supplier->supplier_id);
+            $row++;
+            $no++;
+        }
+
+        // Auto-size columns
+        foreach (range('A', 'E') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        // Set sheet title
+        $sheet->setTitle('Data Supplier');
+
+        // Create writer and set headers for download
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Supplier ' . date('Y-m-d H:i:s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
     }
 }
