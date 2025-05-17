@@ -5,6 +5,8 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
+                <a href="{{ url('/supplier/export_pdf') }}" class="btn btn-primary"><i class="fa fa-file-pdf"></i>
+                    Export Pdf</a>
                 <a href="{{ url('/supplier/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i>
                     Export</a>
                 <button onclick="modalAction('{{ url('/supplier/import') }}')" class="btn btn-info">Import</button>

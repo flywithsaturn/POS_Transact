@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SupplierController extends Controller
 {
@@ -318,5 +319,23 @@ class SupplierController extends Controller
 
         $writer->save('php://output');
         exit;
+    }
+
+    public function export_pdf(Request $request)
+    {
+        $suppliers = SupplierModel::select('supplier_id', 'supplier_kode', 'supplier_nama', 'supplier_alamat')
+            ->orderBy('supplier_id');
+
+        if ($request->filter_nama) {
+            $suppliers->where('supplier_nama', 'like', '%' . $request->filter_nama . '%');
+        }
+
+        $suppliers = $suppliers->get();
+
+        $pdf = Pdf::loadView('supplier.export_pdf', ['suppliers' => $suppliers]);
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+        return $pdf->stream('Data Supplier ' . date('Y-m-d H:i:s') . '.pdf');
     }
 }
