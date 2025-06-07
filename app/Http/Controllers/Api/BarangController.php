@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BarangModel;
+use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
@@ -15,7 +16,20 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        $barang = BarangModel::create($request->all());
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // Ambil semua data dari request
+        $data = $request->all();
+        $data['image'] = $request->image->hashName();
+
+        $barang = BarangModel::create($data);
+
         return response()->json($barang->load('kategori'), 201);
     }
 
@@ -26,7 +40,21 @@ class BarangController extends Controller
 
     public function update(Request $request, BarangModel $barang)
     {
-        $barang->update($request->all());
+        $validator = Validator::make($request->all(), [
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // Ambil semua data dari request
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->image->hashName();
+        }
+
+        $barang->update($data);
         return $barang->load('kategori');
     }
 
