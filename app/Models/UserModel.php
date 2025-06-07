@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable; // implementasi class Authenticatable
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class UserModel extends Authenticatable implements JWTSubject
 {
-
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -21,15 +21,37 @@ class UserModel extends Authenticatable implements JWTSubject
         return [];
     }
 
-    protected $table = 'm_user'; // nama table
-    protected $primaryKey = 'user_id'; // primary key pada table tsb
-    protected $fillable = ['username', 'password', 'nama', 'level_id', 'profile_image', 'created_at', 'updated_at'];
-    protected $hidden = ['password']; // Jangan ditampilkan saat select
-    protected $casts = ['password' => 'hashed']; // casting password menjadi hashed
+    use HasFactory;
+
+    protected $table = 'm_user';
+    protected $primaryKey = 'user_id';
+    protected $hidden = ['password'];
+    protected $casts = ['password' => 'hashed'];
+    protected $fillable =
+        [
+            'username',
+            'password',
+            'nama',
+            'level_id',
+            'image',
+            'created_at',
+            'updated_at',
+            'profile_image',
+        ];
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn($image) => url('/storage/posts/' . $image),
+        );
+    }
+    /**
+     * Relasi ke tabel level
+     */
     public function level(): BelongsTo
     {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
     }
+
     /**
      * Mendapatkan nama role
      */
@@ -45,6 +67,7 @@ class UserModel extends Authenticatable implements JWTSubject
     {
         return $this->level->level_kode == $role;
     }
+
     /**
      * Mendapatkan kode role
      */
