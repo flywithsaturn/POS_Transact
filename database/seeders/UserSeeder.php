@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -20,14 +19,16 @@ class UserSeeder extends Seeder
                 'level_id' => 1,
                 'username' => 'admin',
                 'profile_image' => 'profile_default.png',
+                'image' => 'default.png',
                 'nama' => 'Administrator',
-                'password' => Hash::make('12345'), // class untuk mengenkripsi/hash password
+                'password' => Hash::make('12345'),
             ],
             [
                 'user_id' => 2,
                 'level_id' => 2,
                 'username' => 'manager',
                 'profile_image' => 'profile_default.png',
+                'image' => 'default.png',
                 'nama' => 'Manager',
                 'password' => Hash::make('12345'),
             ],
@@ -36,6 +37,7 @@ class UserSeeder extends Seeder
                 'level_id' => 3,
                 'username' => 'staff',
                 'profile_image' => 'profile_default.png',
+                'image' => 'default.png',
                 'nama' => 'Staff/Kasir',
                 'password' => Hash::make('12345'),
             ],
