@@ -106,7 +106,7 @@
 ### 📊 Dashboard
 
 Halaman utama yang menampilkan ringkasan data sistem.
-![Dashboard](images/2.png)
+![Dashboard](public/images/1.png)
 
 ---
 
@@ -115,17 +115,17 @@ Halaman utama yang menampilkan ringkasan data sistem.
 ### 🏷️ Level User
 
 Manajemen level atau role pengguna dalam sistem.
-![Level User](images/4.png)
+![Level User](public/images/2.png)
 
 ### 👥 Data User
 
 Menampilkan dan mengelola data pengguna.
-![Data User](images/3.png)
+![Data User](public/images/3.png)
 
 ### ✏️ Update Profile
 
 Halaman untuk mengubah profil pengguna.
-![Update Profile](images/1.png)
+![Update Profile](public/images/4.png)
 
 ---
 
@@ -134,17 +134,17 @@ Halaman untuk mengubah profil pengguna.
 ### 🗂️ Kategori Barang
 
 Mengelola kategori dari setiap barang.
-![Kategori](images/4.png)
+![Kategori](public/images/5.png)
 
 ### 📦 Data Barang
 
 Menampilkan daftar barang yang tersedia.
-![Barang](images/3.png)
+![Barang](public/images/6.png)
 
 ### 🚚 Supplier Barang
 
 Mengelola data supplier barang.
-![Supplier](images/5.png)
+![Supplier](public/images/7.png)
 
 ---
 
@@ -153,12 +153,12 @@ Mengelola data supplier barang.
 ### 🛒 Transaksi Penjualan
 
 Melakukan transaksi penjualan barang.
-![Penjualan](images/6.png)
+![Penjualan](public/images/6.png)
 
 ### 📈 Laporan Penjualan
 
 Melihat riwayat dan laporan transaksi penjualan.
-![Laporan](images/7.png)
+![Laporan](public/images/7.png)
 
 ---
 
